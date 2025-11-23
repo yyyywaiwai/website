@@ -90,8 +90,8 @@ function App() {
         <AppBar position="sticky" sx={{ top: 0, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <Toolbar>
             <Avatar
-              src="/logo.png"
-              alt="Logo"
+              src="/icon.jpg"
+              alt="Pancake icon"
               sx={{
                 width: 40,
                 height: 40,
