@@ -4,6 +4,7 @@ import ProjectCard from './ProjectCard';
 import ambotImage from '../assets/ambot.jpg';
 import iijwidgetImage from '../assets/iijwidget_gradient.png';
 import lyricShooterImage from '../assets/lyric_shooter_original.png';
+import amdlWebImage from '../assets/amdl_web.png';
 
 const projects = [
     {
@@ -17,8 +18,8 @@ const projects = [
         title: 'IIJWidget',
         description: 'IIJmioの残データ量をウィジェットで確認できる、非公式iOSアプリ。ピュアSwiftUI',
         imageUrl: iijwidgetImage,
-        siteUrl: 'https://testflight.apple.com/join/9q9ja7kX',
-        siteLabel: 'TestFlightリンク',
+        siteUrl: 'https://apps.apple.com/jp/app/iijwidget/id6755093444',
+        siteLabel: 'Appstoreリンク',
         sourceUrl: 'https://github.com/yyyywaiwai/IIJWidget',
     },
     {
@@ -27,6 +28,12 @@ const projects = [
         imageUrl: lyricShooterImage,
         siteUrl: 'https://lyric-shooter.yyyywaiwai.com',
         sourceUrl: 'https://github.com/yyyywaiwai/lyric-shooter-game',
+    },
+    {
+        title: 'amdl-web',
+        description: 'Apple Musicダウンローダー',
+        imageUrl: amdlWebImage,
+        siteUrl: 'https://amdl.yyyywaiwai.com',
     },
 ];
 
