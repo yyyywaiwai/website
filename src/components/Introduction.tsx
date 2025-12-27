@@ -92,10 +92,8 @@ const Introduction: React.FC = () => {
                         sx={{
                             fontWeight: 800,
                             display: 'block',
-                            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #006a6a 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
+                            color: '#1a1a2e',
+                            lineHeight: 1.2,
                         }}
                     >
                         yyyywaiwai

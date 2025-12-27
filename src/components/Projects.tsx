@@ -103,10 +103,7 @@ const Projects: React.FC = () => {
                             fontWeight: 800,
                             fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
                             letterSpacing: '-0.02em',
-                            background: 'linear-gradient(135deg, #191c1c 0%, #006a6a 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
+                            color: '#191c1c',
                             mb: 2,
                         }}
                     >
