@@ -99,7 +99,7 @@ function App() {
               }}
             />
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              yyyyywaiwai's website
+              yyyywaiwai's website
             </Typography>
           </Toolbar>
         </AppBar>
