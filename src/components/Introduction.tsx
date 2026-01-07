@@ -5,6 +5,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import RamenDiningIcon from '@mui/icons-material/RamenDining';
+import DiscordWidget from './DiscordWidget';
 
 const Introduction: React.FC = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -197,6 +198,7 @@ const Introduction: React.FC = () => {
                     justifyContent="center"
                     alignItems="center"
                     sx={{
+                        mb: 4,
                         opacity: isVisible ? 1 : 0,
                         transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
                         transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -245,6 +247,18 @@ const Introduction: React.FC = () => {
                         連絡はこちらから
                     </Button>
                 </Stack>
+
+                {/* Discord Link */}
+                <Box
+                    sx={{
+                        opacity: isVisible ? 1 : 0,
+                        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transitionDelay: '0.6s',
+                    }}
+                >
+                    <DiscordWidget />
+                </Box>
 
                 {/* Scroll indicator */}
                 <Box

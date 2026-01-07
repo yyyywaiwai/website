@@ -3,6 +3,13 @@ import { Card, CardContent, CardActions, Typography, Button, CardMedia, Box, Chi
 import LaunchIcon from '@mui/icons-material/Launch';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
+interface ActionButton {
+    label: string;
+    url: string;
+    variant?: 'contained' | 'outlined';
+    icon?: React.ReactNode;
+}
+
 interface ProjectCardProps {
     title: string;
     description: string;
@@ -12,6 +19,7 @@ interface ProjectCardProps {
     siteLabel?: string;
     sourceLabel?: string;
     tags?: string[];
+    actionButtons?: ActionButton[];
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -22,7 +30,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     sourceUrl,
     siteLabel,
     sourceLabel,
-    tags
+    tags,
+    actionButtons
 }) => {
     return (
         <Card
@@ -125,54 +134,93 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {description}
                 </Typography>
             </CardContent>
-            <CardActions sx={{ p: 2, pt: 0, gap: 0.5 }}>
-                {siteUrl && (
-                    <Button
-                        variant="contained"
-                        size="small"
-                        href={siteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<LaunchIcon sx={{ fontSize: 16 }} />}
-                        sx={{
-                            borderRadius: 100,
-                            px: 2,
-                            py: 0.75,
-                            fontSize: '0.8rem',
-                            boxShadow: 'none',
-                            background: 'linear-gradient(135deg, #006a6a 0%, #005454 100%)',
-                            '&:hover': {
-                                boxShadow: '0 4px 12px rgba(0, 106, 106, 0.25)',
-                                background: 'linear-gradient(135deg, #005858 0%, #004545 100%)',
-                            },
-                        }}
-                    >
-                        {siteLabel || 'サイトを開く'}
-                    </Button>
-                )}
-                {sourceUrl && (
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        href={sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<GitHubIcon sx={{ fontSize: 16 }} />}
-                        sx={{
-                            borderRadius: 100,
-                            px: 2,
-                            py: 0.75,
-                            fontSize: '0.8rem',
-                            borderColor: 'rgba(0, 106, 106, 0.3)',
-                            color: 'primary.main',
-                            '&:hover': {
-                                borderColor: 'primary.main',
-                                bgcolor: 'rgba(0, 106, 106, 0.04)',
-                            },
-                        }}
-                    >
-                        {sourceLabel || 'ソースコード'}
-                    </Button>
+            <CardActions sx={{ p: 2, pt: 0, gap: 0.5, flexWrap: 'wrap' }}>
+                {actionButtons && actionButtons.length > 0 ? (
+                    actionButtons.map((button, index) => (
+                        <Button
+                            key={index}
+                            variant={button.variant || 'contained'}
+                            size="small"
+                            href={button.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={button.icon || <LaunchIcon sx={{ fontSize: 16 }} />}
+                            sx={{
+                                borderRadius: 100,
+                                px: 2,
+                                py: 0.75,
+                                fontSize: '0.8rem',
+                                ...(button.variant === 'outlined' ? {
+                                    borderColor: 'rgba(0, 106, 106, 0.3)',
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        borderColor: 'primary.main',
+                                        bgcolor: 'rgba(0, 106, 106, 0.04)',
+                                    },
+                                } : {
+                                    boxShadow: 'none',
+                                    background: 'linear-gradient(135deg, #006a6a 0%, #005454 100%)',
+                                    '&:hover': {
+                                        boxShadow: '0 4px 12px rgba(0, 106, 106, 0.25)',
+                                        background: 'linear-gradient(135deg, #005858 0%, #004545 100%)',
+                                    },
+                                }),
+                            }}
+                        >
+                            {button.label}
+                        </Button>
+                    ))
+                ) : (
+                    <>
+                        {siteUrl && (
+                            <Button
+                                variant="contained"
+                                size="small"
+                                href={siteUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                startIcon={<LaunchIcon sx={{ fontSize: 16 }} />}
+                                sx={{
+                                    borderRadius: 100,
+                                    px: 2,
+                                    py: 0.75,
+                                    fontSize: '0.8rem',
+                                    boxShadow: 'none',
+                                    background: 'linear-gradient(135deg, #006a6a 0%, #005454 100%)',
+                                    '&:hover': {
+                                        boxShadow: '0 4px 12px rgba(0, 106, 106, 0.25)',
+                                        background: 'linear-gradient(135deg, #005858 0%, #004545 100%)',
+                                    },
+                                }}
+                            >
+                                {siteLabel || 'サイトを開く'}
+                            </Button>
+                        )}
+                        {sourceUrl && (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                href={sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                startIcon={<GitHubIcon sx={{ fontSize: 16 }} />}
+                                sx={{
+                                    borderRadius: 100,
+                                    px: 2,
+                                    py: 0.75,
+                                    fontSize: '0.8rem',
+                                    borderColor: 'rgba(0, 106, 106, 0.3)',
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        borderColor: 'primary.main',
+                                        bgcolor: 'rgba(0, 106, 106, 0.04)',
+                                    },
+                                }}
+                            >
+                                {sourceLabel || 'ソースコード'}
+                            </Button>
+                        )}
+                    </>
                 )}
             </CardActions>
         </Card>
