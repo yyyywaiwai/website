@@ -6,8 +6,6 @@ import iijwidgetImage from '../assets/iijwidget_gradient.png';
 import lyricShooterImage from '../assets/lyric_shooter_original.png';
 import amdlWebImage from '../assets/amdl_web.png';
 import iMonosImage from '../assets/iMonos_compressed.png';
-import DownloadIcon from '@mui/icons-material/Download';
-import StoreIcon from '@mui/icons-material/Store';
 
 const projects = [
     {
@@ -43,22 +41,15 @@ const projects = [
         tags: ['Web', 'Tool'],
     },
     {
-        title: 'iMonos',
-        description: 'monsnode.comを快適に閲覧するためのアプリ。⚠️R18アプリです⚠️',
+        title: 'iMons',
+        description: 'Twitter保存ランキング系iOSクライエント',
         imageUrl: iMonosImage,
         tags: ['iOS', 'SwiftUI'],
         actionButtons: [
             {
-                label: 'PALリポジトリ追加',
-                url: 'altstore-pal://source?url=https://eichi.yyyywaiwai.com/source.json',
+                label: '公式サイト',
+                url: 'https://imons.yyyywaiwai.com/',
                 variant: 'contained' as const,
-                icon: <StoreIcon sx={{ fontSize: 16 }} />,
-            },
-            {
-                label: 'IPAダウンロード',
-                url: 'https://eichi.yyyywaiwai.com/iMonos-unsigned.ipa',
-                variant: 'outlined' as const,
-                icon: <DownloadIcon sx={{ fontSize: 16 }} />,
             },
         ],
     },
