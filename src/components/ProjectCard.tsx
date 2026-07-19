@@ -1,231 +1,140 @@
 import React from 'react';
-import { Card, CardContent, CardActions, Typography, Button, CardMedia, Box, Chip, Stack } from '@mui/material';
-import LaunchIcon from '@mui/icons-material/Launch';
+import ArrowOutwardRoundedIcon from '@mui/icons-material/ArrowOutwardRounded';
 import GitHubIcon from '@mui/icons-material/GitHub';
-
-interface ActionButton {
-    label: string;
-    url: string;
-    variant?: 'contained' | 'outlined';
-    icon?: React.ReactNode;
-}
+import { Box, Button, Card, CardContent, CardMedia, Chip, Stack, Typography } from '@mui/material';
 
 interface ProjectCardProps {
-    title: string;
-    description: string;
-    imageUrl?: string;
-    siteUrl?: string;
-    sourceUrl?: string;
-    siteLabel?: string;
-    sourceLabel?: string;
-    tags?: string[];
-    actionButtons?: ActionButton[];
+  title: string;
+  description: string;
+  imageUrl?: string;
+  siteUrl?: string;
+  sourceUrl?: string;
+  siteLabel?: string;
+  sourceLabel?: string;
+  tags?: string[];
+  featured?: boolean;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
-    title,
-    description,
-    imageUrl,
-    siteUrl,
-    sourceUrl,
-    siteLabel,
-    sourceLabel,
-    tags,
-    actionButtons
-}) => {
-    return (
-        <Card
-            variant="outlined"
-            sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                bgcolor: 'background.paper',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    background: 'linear-gradient(90deg, #006a6a 0%, #4e5f7d 100%)',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease',
-                },
-                '&:hover::before': {
-                    opacity: 1,
-                },
-            }}
+  title,
+  description,
+  imageUrl,
+  siteUrl,
+  sourceUrl,
+  siteLabel,
+  sourceLabel,
+  tags = [],
+  featured = false,
+}) => (
+  <Card
+    component="article"
+    className="project-card"
+    sx={{
+      height: '100%',
+      display: 'grid',
+      gridTemplateColumns: featured ? { xs: '1fr', md: '1.15fr 0.85fr' } : '1fr',
+      overflow: 'hidden',
+      border: '1px solid',
+      borderColor: 'divider',
+      borderRadius: { xs: '1.5rem', md: featured ? '2rem' : '1.65rem' },
+      boxShadow: 'none',
+      bgcolor: 'background.default',
+    }}
+  >
+    {imageUrl && (
+      <Box className="project-media" sx={{ minHeight: featured ? { xs: 260, md: 430 } : 270 }}>
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={`${title} のプロジェクト画像`}
+          loading={featured ? 'eager' : 'lazy'}
+          sx={{
+            width: '100%',
+            height: '100%',
+            minHeight: 'inherit',
+            objectFit: featured ? 'contain' : 'cover',
+            p: featured ? { xs: 5, md: 8 } : 0,
+            transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',
+          }}
+        />
+      </Box>
+    )}
+
+    <CardContent
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        gap: 4,
+        p: { xs: 3, md: featured ? 5 : 3.5 },
+        '&:last-child': { pb: { xs: 3, md: featured ? 5 : 3.5 } },
+      }}
+    >
+      <Box>
+        <Stack direction="row" useFlexGap flexWrap="wrap" spacing={0.75} sx={{ mb: 2.5 }}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="small"
+              sx={{
+                height: 26,
+                bgcolor: 'rgba(127,127,127,0.10)',
+                color: 'text.secondary',
+                fontSize: '0.72rem',
+                fontWeight: 650,
+              }}
+            />
+          ))}
+        </Stack>
+        <Typography
+          component="h3"
+          variant={featured ? 'h2' : 'h4'}
+          sx={{
+            fontWeight: 700,
+            fontSize: featured ? { xs: '2.4rem', md: '3.4rem' } : { xs: '1.75rem', md: '2rem' },
+            letterSpacing: '-0.035em',
+          }}
         >
-            {imageUrl && (
-                <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                    <CardMedia
-                        component="img"
-                        sx={{
-                            aspectRatio: '16/9',
-                            objectFit: 'cover',
-                            transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                            '&:hover': {
-                                transform: 'scale(1.05)',
-                            },
-                        }}
-                        image={imageUrl}
-                        alt={title}
-                    />
-                    {/* Overlay gradient */}
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            height: '40%',
-                            background: 'linear-gradient(to top, rgba(0,0,0,0.1) 0%, transparent 100%)',
-                            pointerEvents: 'none',
-                        }}
-                    />
-                </Box>
-            )}
-            <CardContent sx={{ flexGrow: 1, p: 3, pb: 2 }}>
-                {/* Tags */}
-                {tags && tags.length > 0 && (
-                    <Stack direction="row" spacing={0.5} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
-                        {tags.map((tag) => (
-                            <Chip
-                                key={tag}
-                                label={tag}
-                                size="small"
-                                sx={{
-                                    height: 22,
-                                    fontSize: '0.7rem',
-                                    fontWeight: 600,
-                                    bgcolor: 'rgba(0, 106, 106, 0.08)',
-                                    color: 'primary.main',
-                                    '& .MuiChip-label': {
-                                        px: 1,
-                                    },
-                                }}
-                            />
-                        ))}
-                    </Stack>
-                )}
-                <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="h3"
-                    sx={{
-                        fontWeight: 700,
-                        fontSize: '1.25rem',
-                        letterSpacing: '-0.01em',
-                    }}
-                >
-                    {title}
-                </Typography>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                        lineHeight: 1.7,
-                        whiteSpace: 'pre-wrap',
-                    }}
-                >
-                    {description}
-                </Typography>
-            </CardContent>
-            <CardActions sx={{ p: 2, pt: 0, gap: 0.5, flexWrap: 'wrap' }}>
-                {actionButtons && actionButtons.length > 0 ? (
-                    actionButtons.map((button, index) => (
-                        <Button
-                            key={index}
-                            variant={button.variant || 'contained'}
-                            size="small"
-                            href={button.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            startIcon={button.icon || <LaunchIcon sx={{ fontSize: 16 }} />}
-                            sx={{
-                                borderRadius: 100,
-                                px: 2,
-                                py: 0.75,
-                                fontSize: '0.8rem',
-                                ...(button.variant === 'outlined' ? {
-                                    borderColor: 'rgba(0, 106, 106, 0.3)',
-                                    color: 'primary.main',
-                                    '&:hover': {
-                                        borderColor: 'primary.main',
-                                        bgcolor: 'rgba(0, 106, 106, 0.04)',
-                                    },
-                                } : {
-                                    boxShadow: 'none',
-                                    background: 'linear-gradient(135deg, #006a6a 0%, #005454 100%)',
-                                    '&:hover': {
-                                        boxShadow: '0 4px 12px rgba(0, 106, 106, 0.25)',
-                                        background: 'linear-gradient(135deg, #005858 0%, #004545 100%)',
-                                    },
-                                }),
-                            }}
-                        >
-                            {button.label}
-                        </Button>
-                    ))
-                ) : (
-                    <>
-                        {siteUrl && (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                href={siteUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                startIcon={<LaunchIcon sx={{ fontSize: 16 }} />}
-                                sx={{
-                                    borderRadius: 100,
-                                    px: 2,
-                                    py: 0.75,
-                                    fontSize: '0.8rem',
-                                    boxShadow: 'none',
-                                    background: 'linear-gradient(135deg, #006a6a 0%, #005454 100%)',
-                                    '&:hover': {
-                                        boxShadow: '0 4px 12px rgba(0, 106, 106, 0.25)',
-                                        background: 'linear-gradient(135deg, #005858 0%, #004545 100%)',
-                                    },
-                                }}
-                            >
-                                {siteLabel || 'サイトを開く'}
-                            </Button>
-                        )}
-                        {sourceUrl && (
-                            <Button
-                                variant="outlined"
-                                size="small"
-                                href={sourceUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                startIcon={<GitHubIcon sx={{ fontSize: 16 }} />}
-                                sx={{
-                                    borderRadius: 100,
-                                    px: 2,
-                                    py: 0.75,
-                                    fontSize: '0.8rem',
-                                    borderColor: 'rgba(0, 106, 106, 0.3)',
-                                    color: 'primary.main',
-                                    '&:hover': {
-                                        borderColor: 'primary.main',
-                                        bgcolor: 'rgba(0, 106, 106, 0.04)',
-                                    },
-                                }}
-                            >
-                                {sourceLabel || 'ソースコード'}
-                            </Button>
-                        )}
-                    </>
-                )}
-            </CardActions>
-        </Card>
-    );
-};
+          {title}
+        </Typography>
+        <Typography
+          color="text.secondary"
+          sx={{ mt: 1.5, maxWidth: 480, fontSize: featured ? '1.05rem' : '0.98rem', lineHeight: 1.75 }}
+        >
+          {description}
+        </Typography>
+      </Box>
+
+      <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1}>
+        {siteUrl && (
+          <Button
+            variant="contained"
+            href={siteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            endIcon={<ArrowOutwardRoundedIcon />}
+            aria-label={`${title} の${siteLabel || 'サイト'}を新しいタブで開く`}
+          >
+            {siteLabel || 'サイトを開く'}
+          </Button>
+        )}
+        {sourceUrl && (
+          <Button
+            variant="outlined"
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            startIcon={<GitHubIcon />}
+            aria-label={`${title} の${sourceLabel || 'ソースコード'}を新しいタブで開く`}
+            sx={{ borderColor: 'divider', color: 'text.primary' }}
+          >
+            {sourceLabel || 'ソースコード'}
+          </Button>
+        )}
+      </Stack>
+    </CardContent>
+  </Card>
+);
 
 export default ProjectCard;
-
