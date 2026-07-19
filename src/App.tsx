@@ -149,7 +149,7 @@ function App() {
         <AppBar className="glass-surface site-header" position="sticky" elevation={0} color="transparent">
           <Container maxWidth="lg">
             <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: { xs: 0.5, sm: 1 } }}>
-              <Tooltip title={isRickrolled ? '見つかりました' : 'プロフィール'}>
+              <Tooltip title={isRickrolled ? 'You just got rickrolled!' : 'プロフィール'}>
                 <IconButton
                   aria-label="プロフィール画像のイースターエッグを表示"
                   onClick={handleAvatarClick}
