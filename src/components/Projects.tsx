@@ -1,19 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Container, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
+import React from 'react';
+import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import ProjectCard from './ProjectCard';
+import Reveal from './Reveal';
 import ambotImage from '../assets/ambot.jpg';
-import iijwidgetImage from '../assets/iijwidget_gradient.png';
+import iijwidgetImage from '../assets/iijwidget_gradient.jpg';
 import lyricShooterImage from '../assets/lyric_shooter_original.png';
-import amdlWebImage from '../assets/amdl_web.png';
+import amdlWebImage from '../assets/amdl_web.jpg';
 import iMonosImage from '../assets/iMonos_compressed.png';
 
 const projects = [
   {
     title: 'iMons',
-    description: 'Twitter 保存ランキングを楽しむための iOS クライアント。',
+    description: 'Twitter 保存ランキングを楽しむための iOS クライアント。いちばん使ってもらっている代表作です。',
     imageUrl: iMonosImage,
     siteUrl: 'https://imons.yyyywaiwai.com/',
-    siteLabel: '公式サイト',
+    siteLabel: '公式サイトを見る',
     tags: ['iOS', 'SwiftUI'],
     featured: true,
   },
@@ -22,16 +23,16 @@ const projects = [
     description: 'IIJmio の残データ量をウィジェットで確認できる、ピュア SwiftUI の非公式 iOS アプリ。',
     imageUrl: iijwidgetImage,
     siteUrl: 'https://apps.apple.com/jp/app/iijwidget/id6755093444',
-    siteLabel: 'App Store',
+    siteLabel: 'App Store で見る',
     sourceUrl: 'https://github.com/yyyywaiwai/IIJWidget',
     tags: ['iOS', 'SwiftUI'],
   },
   {
     title: 'AMbot',
-    description: 'gamdl を利用して Apple Music を扱う Discord 音楽 Bot。',
+    description: 'Apple Music の曲をそのまま Discord で流せる音楽 Bot。',
     imageUrl: ambotImage,
     siteUrl: 'https://discord.com/oauth2/authorize?client_id=1409248906386215002',
-    siteLabel: 'Bot を招待',
+    siteLabel: 'Bot を招待する',
     tags: ['Discord', 'Bot'],
   },
   {
@@ -51,82 +52,53 @@ const projects = [
   },
 ];
 
-const Projects: React.FC = () => {
-  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const shouldReveal = prefersReducedMotion || isVisible;
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, [prefersReducedMotion]);
-
-  return (
-    <Box
-      component="section"
-      ref={sectionRef}
-      id="projects"
-      aria-labelledby="projects-title"
-      sx={{
-        scrollMarginTop: '5rem',
-        py: { xs: 10, md: 16 },
-        bgcolor: 'background.paper',
-      }}
-    >
-      <Container maxWidth="lg">
-        <Box
-          className={shouldReveal ? 'reveal-section is-visible' : 'reveal-section'}
-          sx={{
-            mb: { xs: 5, md: 7 },
-          }}
+const Projects: React.FC = () => (
+  <Box
+    component="section"
+    id="projects"
+    aria-labelledby="projects-title"
+    sx={{
+      scrollMarginTop: '5rem',
+      py: { xs: 8, md: 16 },
+    }}
+  >
+    <Container maxWidth="lg">
+      <Reveal sx={{ mb: { xs: 4, md: 6 } }}>
+        <Typography
+          id="projects-title"
+          component="h2"
+          variant="h2"
+          sx={{ fontSize: { xs: '2.4rem', md: '3.5rem' } }}
         >
-          <Typography
-            id="projects-title"
-            component="h2"
-            variant="h2"
-            sx={{ fontSize: { xs: '2.7rem', md: '4.5rem' } }}
+          Projects
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1.5, maxWidth: '44ch' }}>
+          はい、iMons もあります。でも、下も見ていってください。
+        </Typography>
+      </Reveal>
+
+      <Grid container spacing={{ xs: 2.5, md: 3 }}>
+        {projects.map((project, index) => (
+          <Grid
+            key={project.title}
+            size={{ xs: 12, sm: project.featured ? 12 : 6 }}
           >
-            Projects
-          </Typography>
-        </Box>
-
-        <Grid container spacing={{ xs: 2.5, md: 3 }}>
-          {projects.map((project, index) => (
-            <Grid
-              key={project.title}
-              size={{ xs: 12, md: project.featured ? 12 : 6 }}
-              className={shouldReveal ? 'reveal-card is-visible' : 'reveal-card'}
-              sx={{ '--reveal-delay': `${Math.min(index * 70, 280)}ms` }}
-            >
+            <Reveal delay={(index % 2) * 90} sx={{ height: '100%' }}>
               <ProjectCard {...project} />
-            </Grid>
-          ))}
-        </Grid>
+            </Reveal>
+          </Grid>
+        ))}
+      </Grid>
 
-        <Stack direction="row" justifyContent="center" sx={{ mt: { xs: 5, md: 7 } }}>
+      <Reveal>
+        <Stack direction="row" justifyContent="center" sx={{ mt: { xs: 4, md: 6 } }}>
           <Typography variant="body2" color="text.secondary">
             すべて個人開発・趣味プロジェクトです。
           </Typography>
         </Stack>
-      </Container>
-    </Box>
-  );
-};
+      </Reveal>
+    </Container>
+  </Box>
+);
 
 export default Projects;

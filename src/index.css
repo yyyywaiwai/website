@@ -1,10 +1,32 @@
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Noto Sans JP", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: light dark;
+
+  /* design tokens */
+  --accent: #0071e3;
+  --accent-soft: rgba(0, 113, 227, 0.12);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-press: 120ms;
+  --dur-fade: 200ms;
+  --dur-move: 260ms;
+  --dur-reveal: 560ms;
+  --shadow-1: 0 2px 10px rgba(29, 29, 35, 0.05), 0 12px 32px rgba(29, 29, 35, 0.1);
+  --shadow-2: 0 4px 14px rgba(29, 29, 35, 0.06), 0 24px 60px rgba(29, 29, 35, 0.12);
+  --shadow-3: 0 10px 30px rgba(29, 29, 35, 0.08), 0 30px 90px rgba(29, 29, 35, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #0a84ff;
+    --accent-soft: rgba(10, 132, 255, 0.16);
+    --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+    --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.35), 0 24px 60px rgba(0, 0, 0, 0.45);
+    --shadow-3: 0 10px 30px rgba(0, 0, 0, 0.4), 0 30px 90px rgba(0, 0, 0, 0.5);
+  }
 }
 
 * {
@@ -28,7 +50,7 @@ a {
 }
 
 ::selection {
-  background: rgba(0, 113, 227, 0.22);
+  background: var(--accent-soft);
 }
 
 .skip-link {
@@ -39,7 +61,7 @@ a {
   padding: 0.7rem 1rem;
   border-radius: 999px;
   color: #fff;
-  background: #0071e3;
+  background: var(--accent);
   font-weight: 700;
   text-decoration: none;
   transform: translateY(-160%);
@@ -50,15 +72,23 @@ a {
   transform: translateY(0);
 }
 
+/* ヘッダー: 最上部ではクロームなし、スクロールでガラス + ヘアラインが立ち上がる */
 .site-header {
-  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-  background: rgba(250, 250, 252, 0.74) !important;
+  border-bottom: 1px solid transparent;
+  background: transparent !important;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  transition: background-color var(--dur-move) ease, border-color var(--dur-move) ease;
+}
+
+.site-header.is-scrolled {
+  border-bottom-color: rgba(127, 127, 127, 0.18);
+  background: rgba(250, 250, 252, 0.74) !important;
 }
 
 .ambient-orb {
   position: absolute;
+  z-index: -1;
   border-radius: 50%;
   filter: blur(2px);
   pointer-events: none;
@@ -67,17 +97,17 @@ a {
 .ambient-orb--blue {
   width: min(52rem, 78vw);
   height: min(52rem, 78vw);
-  top: -23rem;
-  right: -19rem;
+  top: max(-23rem, -42vw);
+  right: max(-19rem, -35vw);
   background: radial-gradient(circle, rgba(0, 113, 227, 0.18), transparent 68%);
 }
 
-.ambient-orb--violet {
+.ambient-orb--soft {
   width: min(36rem, 64vw);
   height: min(36rem, 64vw);
-  bottom: -24rem;
-  left: -16rem;
-  background: radial-gradient(circle, rgba(175, 82, 222, 0.1), transparent 68%);
+  top: min(30rem, 120vw);
+  left: max(-16rem, -30vw);
+  background: radial-gradient(circle, rgba(0, 113, 227, 0.07), transparent 68%);
 }
 
 .glass-surface {
@@ -87,19 +117,11 @@ a {
   -webkit-backdrop-filter: blur(28px) saturate(170%);
 }
 
-.status-dot {
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 0 0.25rem rgba(0, 113, 227, 0.12);
-}
-
 .status-dot--green {
+  display: inline-block;
   width: 0.45rem;
   height: 0.45rem;
-  color: #30d158;
+  border-radius: 50%;
   background: #30d158;
   box-shadow: 0 0 0 0.2rem rgba(48, 209, 88, 0.16);
 }
@@ -113,53 +135,100 @@ a {
   box-shadow: 0 0 0 2.4rem rgba(0, 113, 227, 0.045), 0 0 0 5.2rem rgba(0, 113, 227, 0.025);
 }
 
-.hero-enter {
-  opacity: 0;
-  transform: translateY(1.2rem) scale(0.99);
-  animation: materialize 680ms cubic-bezier(.2,.8,.2,1) forwards;
+/* ヒーロー: 見出しは opacity を動かさず LCP を遅らせない。後続だけフェード */
+.hero-enter--first {
+  animation: hero-rise 480ms var(--ease-out);
 }
 
-.hero-enter--first {
-  animation-delay: 90ms;
+.hero-enter--second,
+.hero-enter--third {
+  opacity: 0;
+  transform: translateY(1rem);
+  animation: hero-materialize 560ms var(--ease-out) forwards;
 }
 
 .hero-enter--second {
-  animation-delay: 200ms;
+  animation-delay: 120ms;
 }
 
-@keyframes materialize {
+.hero-enter--third {
+  animation-delay: 240ms;
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(1rem);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-materialize {
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .eyebrow {
   font-size: 0.78rem !important;
-  font-weight: 750 !important;
+  font-weight: 700 !important;
   letter-spacing: 0.1em !important;
   text-transform: uppercase;
 }
 
-.reveal-section,
-.reveal-card {
-  opacity: 0;
-  transform: translateY(1.5rem);
-  transition: opacity 520ms ease, transform 620ms cubic-bezier(.2,.8,.2,1);
-}
-
-.reveal-card {
+/* スクロールリビール: JS (useReveal) が is-pending を付けた要素だけ隠れる。
+   Observer 非対応・no-JS・印刷ではデフォルト可視 */
+.reveal {
+  transition: opacity var(--dur-reveal) ease, transform 620ms var(--ease-out);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
-.reveal-section.is-visible,
-.reveal-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+.reveal.is-pending {
+  opacity: 0;
+  transform: translateY(1.25rem);
+}
+
+@media print {
+  .reveal.is-pending {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 .project-card {
-  transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms ease, border-color 180ms ease;
+  position: relative;
+  transition: transform var(--dur-move) var(--ease-out), box-shadow var(--dur-move) ease, border-color var(--dur-fade) ease, background-color var(--dur-fade) ease;
+}
+
+.project-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.project-card .MuiCardContent-root .MuiButton-root {
+  position: relative;
+  z-index: 2;
+}
+
+.project-card:focus-within {
+  transform: translateY(-0.3rem);
+  border-color: rgba(0, 113, 227, 0.25);
+  box-shadow: var(--shadow-2);
+}
+
+.project-card:has(.project-card-link:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .project-media {
@@ -172,7 +241,7 @@ a {
   .project-card:hover {
     transform: translateY(-0.3rem);
     border-color: rgba(0, 113, 227, 0.25);
-    box-shadow: 0 24px 60px rgba(29, 29, 31, 0.10);
+    box-shadow: var(--shadow-2);
   }
 
   .project-card:hover .project-media img {
@@ -180,19 +249,8 @@ a {
   }
 }
 
-.music-glow {
-  position: absolute;
-  width: 44rem;
-  height: 44rem;
-  right: -20rem;
-  top: -17rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(250, 45, 85, 0.10), transparent 68%);
-  pointer-events: none;
-}
-
 @media (prefers-color-scheme: dark) {
-  .site-header {
+  .site-header.is-scrolled {
     background: rgba(20, 20, 22, 0.76) !important;
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
@@ -202,8 +260,18 @@ a {
     border-color: rgba(255, 255, 255, 0.12);
   }
 
-  .project-card:hover {
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  .project-card:focus-within {
+    border-color: rgba(10, 132, 255, 0.35);
+    background-color: #2c2c2e;
+    box-shadow: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-card:hover {
+      border-color: rgba(10, 132, 255, 0.35);
+      background-color: #2c2c2e;
+      box-shadow: none;
+    }
   }
 }
 
@@ -212,9 +280,11 @@ a {
     scroll-behavior: auto;
   }
 
-  .hero-enter,
-  .reveal-section,
-  .reveal-card {
+  .hero-enter--first,
+  .hero-enter--second,
+  .hero-enter--third,
+  .reveal,
+  .reveal.is-pending {
     opacity: 1;
     transform: none;
     animation: none;
@@ -225,21 +295,30 @@ a {
   .project-media img,
   .MuiButton-root,
   .MuiIconButton-root {
-    transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease !important;
+    transition: background-color var(--dur-press) ease, color var(--dur-press) ease, opacity var(--dur-press) ease !important;
     transform: none !important;
+  }
+
+  .MuiSkeleton-root::after {
+    animation: none !important;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .site-header,
+  .site-header.is-scrolled,
   .glass-surface {
     background: #f5f5f7 !important;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
+  .site-header {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   @media (prefers-color-scheme: dark) {
-    .site-header,
+    .site-header.is-scrolled,
     .glass-surface {
       background: #1c1c1e !important;
     }

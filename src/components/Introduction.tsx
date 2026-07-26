@@ -17,79 +17,89 @@ const Introduction: React.FC = () => (
     component="section"
     aria-labelledby="hero-title"
     sx={{
-      position: 'relative',
-      overflow: 'hidden',
-      pt: { xs: 8, md: 12 },
-      pb: { xs: 10, md: 16 },
+      pt: { xs: 7, md: 12 },
+      pb: { xs: 7, md: 16 },
     }}
   >
-    <Box className="ambient-orb ambient-orb--blue" aria-hidden="true" />
-    <Box className="ambient-orb ambient-orb--violet" aria-hidden="true" />
-
-    <Container maxWidth="lg" sx={{ position: 'relative' }}>
+    <Container maxWidth="lg">
       <Box
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.16fr) minmax(300px, 0.84fr)' },
           alignItems: 'center',
-          gap: { xs: 7, md: 9 },
+          gap: { xs: 5, md: 9 },
         }}
       >
-        <Box className="hero-enter hero-enter--first">
-          <Typography
-            id="hero-title"
-            component="h1"
-            variant="h1"
-            sx={{
-              maxWidth: 760,
-              fontSize: { xs: 'clamp(2.55rem, 12vw, 3.6rem)', md: 'clamp(3.8rem, 5.2vw, 4.9rem)' },
-              textWrap: 'balance',
-            }}
-          >
-            <Box component="span" sx={{ display: 'block', whiteSpace: 'nowrap' }}>iMonsの人？</Box>
-            <Box component="span" sx={{ display: 'block', whiteSpace: 'nowrap' }}>いいえ、他にも</Box>
-            <Box component="span" sx={{ display: 'block', whiteSpace: 'nowrap' }}>やってますよ。</Box>
-          </Typography>
-
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4, alignItems: { xs: 'stretch', sm: 'center' } }}>
-            <Button
-              variant="contained"
-              size="large"
-              href="#projects"
-              endIcon={<ArrowForwardRoundedIcon />}
-              sx={{ px: 3.5 }}
+        <Box>
+          <Box className="hero-enter--first">
+            <Typography
+              id="hero-title"
+              component="h1"
+              variant="h1"
+              sx={{
+                maxWidth: 760,
+                fontSize: { xs: 'clamp(2.25rem, 11vw, 3.4rem)', md: 'clamp(3.6rem, 5vw, 4.6rem)' },
+                textWrap: 'balance',
+              }}
             >
-              プロジェクトを見る
-            </Button>
-            <DiscordWidget />
-          </Stack>
+              <Box component="span" sx={{ display: 'block' }}>iMonsの人？</Box>
+              <Box component="span" sx={{ display: 'block' }}>いいえ、他にも</Box>
+              <Box component="span" sx={{ display: 'block' }}>やってますよ。</Box>
+            </Typography>
 
-          <Stack
-            direction="row"
-            useFlexGap
-            flexWrap="wrap"
-            spacing={1}
-            aria-label="興味のある分野"
-            sx={{ mt: 4 }}
-          >
-            {interests.map(({ label, icon }) => (
-              <Chip
-                key={label}
-                icon={icon}
-                label={label}
-                variant="outlined"
-                sx={{
-                  height: 36,
-                  borderColor: 'divider',
-                  bgcolor: 'rgba(127,127,127,0.04)',
-                  '& .MuiChip-icon': { color: 'text.secondary', fontSize: 17 },
-                }}
-              />
-            ))}
-          </Stack>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mt: 2.5, maxWidth: '36ch', fontSize: { xs: '1rem', md: '1.05rem' } }}
+            >
+              iOS アプリや Web ツールを趣味で作っています。
+              燃料は Mr.Children とラーメン。
+            </Typography>
+          </Box>
+
+          <Box className="hero-enter--second">
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4, alignItems: { xs: 'stretch', sm: 'center' } }}>
+              <Button
+                variant="contained"
+                size="large"
+                href="#projects"
+                endIcon={<ArrowForwardRoundedIcon />}
+                sx={{ px: 3.5 }}
+              >
+                プロジェクトを見る
+              </Button>
+              <DiscordWidget />
+            </Stack>
+
+            <Stack
+              component="ul"
+              direction="row"
+              useFlexGap
+              flexWrap="wrap"
+              spacing={1}
+              aria-label="興味のある分野"
+              sx={{ listStyle: 'none', m: 0, mt: 4, p: 0 }}
+            >
+              {interests.map(({ label, icon }) => (
+                <Box component="li" key={label} sx={{ display: 'inline-flex' }}>
+                  <Chip
+                    icon={icon}
+                    label={label}
+                    variant="outlined"
+                    sx={{
+                      height: 36,
+                      borderColor: 'divider',
+                      bgcolor: 'rgba(127,127,127,0.04)',
+                      '& .MuiChip-icon': { color: 'text.secondary', fontSize: 17 },
+                    }}
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </Box>
         </Box>
 
-        <Box className="hero-enter hero-enter--second" sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box className="hero-enter--third" sx={{ display: 'flex', justifyContent: 'center' }}>
           <Box
             className="glass-surface profile-card"
             sx={{
@@ -97,9 +107,7 @@ const Introduction: React.FC = () => (
               maxWidth: 430,
               p: { xs: 2, sm: 2.5 },
               borderRadius: '2rem',
-              boxShadow: (theme) => theme.palette.mode === 'dark'
-                ? '0 30px 90px rgba(0,0,0,0.48)'
-                : '0 30px 90px rgba(39,58,91,0.15)',
+              boxShadow: 'var(--shadow-3)',
             }}
           >
             <Box
@@ -109,7 +117,7 @@ const Introduction: React.FC = () => (
                 placeItems: 'center',
                 aspectRatio: '1 / 0.94',
                 overflow: 'hidden',
-                borderRadius: '1.4rem',
+                borderRadius: '1rem',
                 background: (theme) => theme.palette.mode === 'dark'
                   ? 'linear-gradient(145deg, #222228, #111114)'
                   : 'linear-gradient(145deg, #ffffff, #e8f1ff)',
@@ -124,7 +132,7 @@ const Introduction: React.FC = () => (
                   height: { xs: 176, sm: 216 },
                   border: '8px solid',
                   borderColor: 'background.paper',
-                  boxShadow: '0 20px 55px rgba(0,0,0,0.20)',
+                  boxShadow: 'var(--shadow-2)',
                 }}
               />
               <Box
@@ -142,18 +150,18 @@ const Introduction: React.FC = () => (
                   color: '#fff',
                   backdropFilter: 'blur(16px) saturate(160%)',
                   fontSize: '0.78rem',
-                  fontWeight: 650,
+                  fontWeight: 600,
                   letterSpacing: '0.01em',
                 }}
               >
-                <Box component="span" className="status-dot status-dot--green" aria-hidden="true" />
+                <Box component="span" className="status-dot--green" aria-hidden="true" />
                 Building for fun
               </Box>
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 2, px: 1, pt: 2.5, pb: 0.5 }}>
               <Box>
-                <Typography variant="h5" component="p" sx={{ fontWeight: 700, letterSpacing: '-0.025em' }}>
+                <Typography variant="h5" component="p" sx={{ fontWeight: 700, letterSpacing: '-0.02em' }}>
                   yyyywaiwai
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>

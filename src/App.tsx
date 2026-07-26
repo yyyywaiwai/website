@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -17,6 +19,8 @@ import Introduction from './components/Introduction';
 import Music from './components/Music';
 import Projects from './components/Projects';
 import rickrollGif from './assets/rickroll-roll.gif';
+
+const EASE_OUT = 'cubic-bezier(.2,.8,.2,1)';
 
 const buildTheme = (isDark: boolean) => createTheme({
   palette: {
@@ -38,20 +42,21 @@ const buildTheme = (isDark: boolean) => createTheme({
     borderRadius: 18,
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Noto Sans JP", sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif',
     h1: {
       fontWeight: 700,
-      letterSpacing: '-0.045em',
-      lineHeight: 1.02,
+      letterSpacing: '-0.005em',
+      lineHeight: 1.16,
+      fontFeatureSettings: "'palt'",
     },
     h2: {
       fontWeight: 700,
-      letterSpacing: '-0.035em',
+      letterSpacing: '-0.03em',
       lineHeight: 1.08,
     },
     h3: {
-      fontWeight: 650,
-      letterSpacing: '-0.025em',
+      fontWeight: 600,
+      letterSpacing: '-0.02em',
       lineHeight: 1.15,
     },
     body1: {
@@ -61,41 +66,38 @@ const buildTheme = (isDark: boolean) => createTheme({
       lineHeight: 1.65,
     },
     button: {
-      fontWeight: 650,
-      letterSpacing: '-0.01em',
+      fontWeight: 600,
+      letterSpacing: 0,
       textTransform: 'none',
     },
   },
   components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundImage: isDark
-            ? 'radial-gradient(circle at 78% 5%, rgba(10,132,255,0.14), transparent 30rem)'
-            : 'radial-gradient(circle at 78% 5%, rgba(0,113,227,0.10), transparent 30rem)',
-          backgroundAttachment: 'fixed',
-        },
-      },
-    },
     MuiButton: {
       styleOverrides: {
         root: {
           minHeight: 44,
           borderRadius: 999,
           paddingInline: 22,
-          transition: 'transform 120ms ease-out, background-color 180ms ease, box-shadow 180ms ease',
+          transition: `transform 120ms ease-out, background-color 180ms ease, box-shadow 180ms ease, color 180ms ease`,
           '&:active': {
             transform: 'scale(0.97)',
           },
           '&.Mui-focusVisible': {
-            outline: `3px solid ${isDark ? 'rgba(10,132,255,0.48)' : 'rgba(0,113,227,0.32)'}`,
+            outline: `3px solid ${isDark ? '#0a84ff' : '#0071e3'}`,
             outlineOffset: 3,
           },
         },
         contained: {
           boxShadow: 'none',
+          ...(isDark && {
+            backgroundColor: '#0071e3',
+            '&:hover': {
+              backgroundColor: '#0868c9',
+            },
+          }),
           '&:hover': {
             boxShadow: isDark ? '0 8px 24px rgba(10,132,255,0.24)' : '0 8px 24px rgba(0,113,227,0.20)',
+            ...(isDark && { backgroundColor: '#0868c9' }),
           },
         },
       },
@@ -105,12 +107,12 @@ const buildTheme = (isDark: boolean) => createTheme({
         root: {
           minWidth: 44,
           minHeight: 44,
-          transition: 'transform 120ms ease-out, background-color 180ms ease',
+          transition: `transform 120ms ease-out, background-color 180ms ease`,
           '&:active': {
             transform: 'scale(0.94)',
           },
           '&.Mui-focusVisible': {
-            outline: `3px solid ${isDark ? 'rgba(10,132,255,0.48)' : 'rgba(0,113,227,0.32)'}`,
+            outline: `3px solid ${isDark ? '#0a84ff' : '#0071e3'}`,
             outlineOffset: 2,
           },
         },
@@ -126,14 +128,65 @@ const buildTheme = (isDark: boolean) => createTheme({
   },
 });
 
+const SECTION_IDS = ['projects', 'music'] as const;
+
 function App() {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const theme = useMemo(() => buildTheme(prefersDark), [prefersDark]);
   const [isRickrolled, setIsRickrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(() => typeof IntersectionObserver === 'undefined');
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const revertTimer = useRef<number | undefined>(undefined);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => window.clearTimeout(revertTimer.current), []);
+
+  // イースターエッグの GIF をアイドル時に先読みし、初回クリックの空白を防ぐ
+  useEffect(() => {
+    const preload = () => {
+      const img = new Image();
+      img.src = rickrollGif;
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(preload);
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = window.setTimeout(preload, 2000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsScrolled(!entry.isIntersecting);
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.id;
+          if (entry.isIntersecting) {
+            setActiveSection(id);
+          } else {
+            setActiveSection((prev) => (prev === id ? null : prev));
+          }
+        });
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    );
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
   const handleAvatarClick = () => {
     window.clearTimeout(revertTimer.current);
@@ -141,17 +194,32 @@ function App() {
     revertTimer.current = window.setTimeout(() => setIsRickrolled(false), prefersReducedMotion ? 1500 : 3000);
   };
 
+  const navButtonSx = (id: string) => ({
+    px: { xs: 1, sm: 2 },
+    minWidth: 0,
+    color: activeSection === id ? 'primary.main' : 'inherit',
+    transition: `color 200ms ${EASE_OUT}`,
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Box id="top" sx={{ minHeight: '100vh' }}>
-        <AppBar className="glass-surface site-header" position="sticky" elevation={0} color="transparent">
+      <Box id="top" sx={{ position: 'relative', minHeight: '100vh', overflow: 'clip' }}>
+        <Box ref={sentinelRef} aria-hidden="true" sx={{ position: 'absolute', top: 0, left: 0, width: '1px', height: '1px' }} />
+        <Box className="ambient-orb ambient-orb--blue" aria-hidden="true" />
+        <Box className="ambient-orb ambient-orb--soft" aria-hidden="true" />
+        <AppBar
+          className={isScrolled ? 'site-header is-scrolled' : 'site-header'}
+          position="sticky"
+          elevation={0}
+          color="transparent"
+        >
           <Container maxWidth="lg">
             <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: { xs: 0.5, sm: 1 } }}>
-              <Tooltip title={isRickrolled ? 'You just got rickrolled!' : 'プロフィール'}>
+              <Tooltip title={isRickrolled ? 'You just got rickrolled!' : '押してみて'}>
                 <IconButton
-                  aria-label="プロフィール画像のイースターエッグを表示"
+                  aria-label="アバター。押すとちょっとしたお楽しみ"
                   onClick={handleAvatarClick}
                   sx={{ mr: { xs: 0.5, sm: 1 } }}
                 >
@@ -161,7 +229,7 @@ function App() {
                     sx={{
                       width: 36,
                       height: 36,
-                      transition: 'opacity 180ms ease, transform 220ms cubic-bezier(.2,.8,.2,1)',
+                      transition: `transform 220ms ${EASE_OUT}`,
                       transform: isRickrolled && !prefersReducedMotion ? 'rotate(-4deg) scale(1.05)' : 'none',
                     }}
                   />
@@ -174,10 +242,9 @@ function App() {
                 sx={{
                   color: 'text.primary',
                   flexGrow: 1,
-                  display: { xs: 'none', sm: 'block' },
-                  fontSize: { xs: '0.94rem', sm: '1rem' },
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
                   fontWeight: 700,
-                  letterSpacing: '-0.025em',
+                  letterSpacing: '-0.02em',
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
                 }}
@@ -186,10 +253,20 @@ function App() {
               </Typography>
 
               <Box component="nav" aria-label="メインナビゲーション" sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
-                <Button color="inherit" href="#projects" sx={{ px: { xs: 1.25, sm: 2 }, minWidth: 0 }}>
+                <Button
+                  color="inherit"
+                  href="#projects"
+                  aria-current={activeSection === 'projects' ? 'true' : undefined}
+                  sx={navButtonSx('projects')}
+                >
                   Projects
                 </Button>
-                <Button color="inherit" href="#music" sx={{ px: { xs: 1.25, sm: 2 }, minWidth: 0 }}>
+                <Button
+                  color="inherit"
+                  href="#music"
+                  aria-current={activeSection === 'music' ? 'true' : undefined}
+                  sx={navButtonSx('music')}
+                >
                   Music
                 </Button>
               </Box>
@@ -230,21 +307,60 @@ function App() {
           <Music />
         </main>
 
-        <Box component="footer" sx={{ py: { xs: 5, md: 6 }, bgcolor: 'background.default' }}>
+        <Box
+          component="footer"
+          sx={{
+            py: { xs: 5, md: 6 },
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
           <Container maxWidth="lg">
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
-                alignItems: 'center',
+                alignItems: { xs: 'flex-start', sm: 'center' },
                 justifyContent: 'space-between',
                 gap: 2,
+                mb: { xs: 3.5, md: 4 },
+              }}
+            >
+              <Typography variant="body1" sx={{ fontWeight: 600, letterSpacing: '-0.01em' }}>
+                日本から、iOS と Web と音楽。
+              </Typography>
+              <Stack direction="row" useFlexGap flexWrap="wrap" spacing={{ xs: 2, sm: 3 }}>
+                <Link href="#projects" color="text.secondary" underline="hover" variant="body2">
+                  Projects
+                </Link>
+                <Link href="#music" color="text.secondary" underline="hover" variant="body2">
+                  Music
+                </Link>
+                <Link
+                  href="https://discord.com/invite/DfRhN8uFjX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="text.secondary"
+                  underline="hover"
+                  variant="body2"
+                >
+                  Discord
+                </Link>
+              </Stack>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                justifyContent: 'space-between',
+                gap: 1.5,
               }}
             >
               <Typography variant="body2" color="text.secondary">
                 © {new Date().getFullYear()} yyyywaiwai
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: { xs: -1, sm: 0 } }}>
                 <Button color="inherit" href="#top">トップへ戻る</Button>
                 <IconButton
                   aria-label="X のプロフィールを新しいタブで開く"

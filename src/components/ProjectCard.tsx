@@ -36,25 +36,29 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       overflow: 'hidden',
       border: '1px solid',
       borderColor: 'divider',
-      borderRadius: { xs: '1.5rem', md: featured ? '2rem' : '1.65rem' },
+      borderRadius: featured ? { xs: '1.5rem', md: '2rem' } : '1.5rem',
       boxShadow: 'none',
-      bgcolor: 'background.default',
+      bgcolor: 'background.paper',
     }}
   >
     {imageUrl && (
-      <Box className="project-media" sx={{ minHeight: featured ? { xs: 260, md: 430 } : 270 }}>
+      <Box
+        className="project-media"
+        sx={featured
+          ? { aspectRatio: { xs: '4 / 3', md: 'auto' }, minHeight: { md: 430 } }
+          : { aspectRatio: '16 / 10' }}
+      >
         <CardMedia
           component="img"
           image={imageUrl}
           alt={`${title} のプロジェクト画像`}
-          loading={featured ? 'eager' : 'lazy'}
+          loading="lazy"
           sx={{
             width: '100%',
             height: '100%',
-            minHeight: 'inherit',
             objectFit: featured ? 'contain' : 'cover',
-            p: featured ? { xs: 5, md: 8 } : 0,
-            transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',
+            p: featured ? { xs: 3, md: 6 } : 0,
+            transition: 'transform 400ms var(--ease-out)',
           }}
         />
       </Box>
@@ -65,7 +69,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        gap: 4,
+        gap: 3.5,
         p: { xs: 3, md: featured ? 5 : 3.5 },
         '&:last-child': { pb: { xs: 3, md: featured ? 5 : 3.5 } },
       }}
@@ -82,21 +86,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 bgcolor: 'rgba(127,127,127,0.10)',
                 color: 'text.secondary',
                 fontSize: '0.72rem',
-                fontWeight: 650,
+                fontWeight: 600,
               }}
             />
           ))}
         </Stack>
         <Typography
           component="h3"
-          variant={featured ? 'h2' : 'h4'}
+          variant={featured ? 'h3' : 'h4'}
           sx={{
             fontWeight: 700,
-            fontSize: featured ? { xs: '2.4rem', md: '3.4rem' } : { xs: '1.75rem', md: '2rem' },
-            letterSpacing: '-0.035em',
+            fontSize: featured ? { xs: '2rem', md: '2.6rem' } : { xs: '1.5rem', md: '1.75rem' },
+            letterSpacing: '-0.03em',
           }}
         >
-          {title}
+          {siteUrl ? (
+            <a className="project-card-link" href={siteUrl} target="_blank" rel="noopener noreferrer">
+              {title}
+            </a>
+          ) : (
+            title
+          )}
         </Typography>
         <Typography
           color="text.secondary"
@@ -114,9 +124,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             endIcon={<ArrowOutwardRoundedIcon />}
-            aria-label={`${title} の${siteLabel || 'サイト'}を新しいタブで開く`}
+            aria-label={`${title} のサイトを新しいタブで開く`}
           >
-            {siteLabel || 'サイトを開く'}
+            {siteLabel || 'サイトを見る'}
           </Button>
         )}
         {sourceUrl && (
@@ -129,7 +139,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             aria-label={`${title} の${sourceLabel || 'ソースコード'}を新しいタブで開く`}
             sx={{ borderColor: 'divider', color: 'text.primary' }}
           >
-            {sourceLabel || 'ソースコード'}
+            {sourceLabel || 'ソースを見る'}
           </Button>
         )}
       </Stack>
