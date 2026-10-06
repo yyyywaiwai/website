@@ -29,7 +29,7 @@ test('Static page preserves metadata, five projects, and accessible links', () =
 
   const projects = [
     ['iMons', 'https://imons.yyyywaiwai.com/'],
-    ['IIJWidget', 'https://apps.apple.com/jp/app/iijwidget/id6755093444'],
+    ['MioWidget', 'https://apps.apple.com/jp/app/miowidget/id6758489056'],
     ['AMbot', 'https://discord.com/oauth2/authorize?client_id=1409248906386215002'],
     ['Lyric Shooter', 'https://lyric-shooter.yyyywaiwai.com'],
     ['amdl-web', 'https://amdl.yyyywaiwai.com'],
